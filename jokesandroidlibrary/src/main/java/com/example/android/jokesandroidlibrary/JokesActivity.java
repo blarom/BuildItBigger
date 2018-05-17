@@ -1,5 +1,6 @@
 package com.example.android.jokesandroidlibrary;
 
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -16,5 +17,22 @@ public class JokesActivity extends AppCompatActivity {
         String joke = getIntent().getStringExtra(JOKE_KEY);
         TextView jokeTextView = findViewById(R.id.joke_textview);
         if (joke != null && joke.length() != 0) jokeTextView.setText(joke);
+
+        returnJoke(joke);
+    }
+
+    private TestCallback mCallback;
+
+    public void setCallback(TestCallback callback){
+        mCallback = callback;
+    }
+
+    public interface TestCallback{
+        void onReturnJokeCalled(String joke);
+    }
+
+    @VisibleForTesting
+    public void returnJoke(String joke) {
+        if (mCallback!=null) mCallback.onReturnJokeCalled(joke);
     }
 }
