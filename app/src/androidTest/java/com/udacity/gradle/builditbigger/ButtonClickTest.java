@@ -8,6 +8,7 @@ import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 
 import com.example.android.jokesandroidlibrary.JokesActivity;
+import com.example.android.jokesjavalibrary.JavaJokes;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,7 +36,10 @@ public class ButtonClickTest {
     @Test
     public void testButtonClick() throws InterruptedException {
         onView(withId(R.id.joke_button)).perform(click());
-        onView(withId(R.id.joke_textview)).check(matches(withText("Hi, I have no sense of humor.")));
+        //onView(withId(R.id.joke_textview)).check(matches(withText("Hi, I have no sense of humor.")));
+        JavaJokes javaJokes = new JavaJokes();
+
+        onView(withId(R.id.joke_textview)).check(matches(withText(javaJokes.getJoke())));
         //checkResultOfAsyncTask();
     }
 

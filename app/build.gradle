@@ -62,25 +62,3 @@ dependencies {
     implementation project(':jokesJavaLibrary')
     implementation project(':jokesandroidlibrary')
 }
-
-//Inspired by: https://www.reddit.com/r/gradle/comments/43fw36/gce_server_testing_automation/
-task automateGceTesting(dependsOn:
-        [':backend:appengineRun',
-         ':app:assembleAndroidTest',
-         ':app:installFreeDebugAndroidTest',
-         ':backend:appengineStop']){
-
-    try {
-        tasks.findByPath(':backend:appengineStop')
-        tasks.findByPath(':backend:appengineRun')
-                .mustRunAfter ':backend:appengineStop'
-        tasks.findByPath(':backend:appengineStop')
-                .mustRunAfter ':app:installFreeDebugAndroidTest'
-    } catch (Exception e) {
-        e.printStackTrace()
-        tasks.findByPath(':backend:appengineRun')
-        tasks.findByPath(':backend:appengineStop')
-                .mustRunAfter ':app:installFreeDebugAndroidTest'
-    }
-
-}

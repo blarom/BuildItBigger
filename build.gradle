@@ -1,5 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+//Tasks built with code inspired by:
+// https://www.reddit.com/r/gradle/comments/43fw36/gce_server_testing_automation/
+// https://stackoverflow.com/questions/31434928/android-gradle-task-google-appengine?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+// https://docs.gradle.org/current/userguide/more_about_tasks.html
+
 buildscript {
     repositories {
         jcenter()
@@ -18,5 +23,52 @@ allprojects {
     repositories {
         jcenter()
         google()
+    }
+
+    tasks.addRule('performFullTest: Running tests as per course guidelines') { String taskName ->
+        if (taskName == 'performFullTest') {
+            task(dependsOn: [performFullTest], taskName)
+            stopGceEngine.mustRunAfter performFullTest
+            runGceEngine.finalizedBy stopGceEngine
+        }
+    }
+
+}
+
+task performFullTest(dependsOn: ['runFreeDebugAndroidTest']) {
+    doFirst {
+        println "Starting full test"
+    }
+    doLast {
+        println "Finished full test"
+    }
+}
+
+task stopGceEngine (dependsOn: ":backend:appengineStop") {
+    doFirst {
+        println "Stopping GCE engine"
+    }
+    doLast {
+        println "Stopped GCE engine"
+    }
+}
+task runFreeDebugAndroidTest(dependsOn: ":app:connectedCheck") {
+    doFirst {
+        runGceEngine
+        println "Starting test"
+    }
+    doLast {
+        println "Finished test"
+    }
+}
+task runGceEngine (dependsOn: ":backend:appengineRun") {
+    doFirst {
+        println "Starting GCE engine"
+    }
+//    project(":backend").afterEvaluate { backend ->
+//        backend.extensions.appengine.daemon = true
+//    }
+    doLast {
+        println "Started GCE engine"
     }
 }

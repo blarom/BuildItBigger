@@ -26,7 +26,8 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
-import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
+import com.udacity.gradle.builditbigger.backend.jokesApi.JokesApi;
+import com.udacity.gradle.builditbigger.backend.jokesApi.model.JokesBean;
 
 import java.io.IOException;
 
@@ -68,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements
     }
     private void loadJokesFromGce() {
 
-        if (Looper.myLooper() == null) Looper.prepare();
         Toast.makeText(getApplicationContext(), "loading", Toast.LENGTH_SHORT).show();
 
         LoaderManager loaderManager = getSupportLoaderManager();
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
     @SuppressLint("StaticFieldLeak") @NonNull @Override public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
         return new AsyncTaskLoader<String>(getApplicationContext()) {
 
-            private MyApi myApiService = null;
+            private JokesApi myApiService = null;
             private Context context;
 
             @Override protected void onStartLoading() {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
                 if(myApiService == null) {  // Only do this once
-                    MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
+                    JokesApi.Builder builder = new JokesApi.Builder(AndroidHttp.newCompatibleTransport(),
                             new AndroidJsonFactory(), null)
                             // options for running against local devappserver
                             // - 10.0.2.2 is localhost's IP address in Android emulator
@@ -132,11 +132,9 @@ public class MainActivity extends AppCompatActivity implements
 
                 //context = params[0].first;
                 //String name = params[0].second;
-                JavaJokes javaJokes = new JavaJokes();
-                String joke = javaJokes.getJoke();
-
                 try {
-                    return myApiService.sayHi(joke).execute().getData();
+                    JokesBean jokeFromJokesBean = new JokesBean();
+                    return myApiService.tellJoke(jokeFromJokesBean).execute().getData();
                 } catch (IOException e) {
                     return e.getMessage();
                 }
